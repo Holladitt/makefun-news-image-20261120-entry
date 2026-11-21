@@ -301,66 +301,110 @@ def _stars(cv, x, y, w, h, n=24):
             cv.disc(x + sx, y + sy, 1, (235, 235, 225))
 
 
+def _hero_banner(cv, fonts, x, y, w, h, text):
+    """Big clear white label bar across the bottom of a hero picture."""
+    cv.rect(x, y + h - 24, w, 24, (255, 255, 255))
+    cv.rect(x, y + h - 24, w, 2, RED)
+    draw_centered(cv, fonts, "sans_bold", 13, x + w // 2, y + h - 20, text,
+                  RED)
+
+
+def _feature_caption(cv, fonts, x, y, w, h, text):
+    """Plain white caption strip across the bottom of a feature picture."""
+    cv.rect(x, y + h - 18, w, 18, (255, 255, 255))
+    cv.rect(x, y + h - 18, w, 2, RULE)
+    draw_centered(cv, fonts, "sans_bold", 10, x + w // 2, y + h - 15, text,
+                  INK)
+
+
 def draw_kyiv(cv, fonts, x, y, w, h):
-    cv.vgrad(x, y, w, h, NIGHT, NIGHT2)
-    _stars(cv, x, y, w, h)
-    # city windows
-    for bx, by in [(20, 80), (36, 84), (58, 78), (240, 82), (262, 78), (282, 84)]:
-        cv.rect(x + bx, y + by, 4, 5, GOLD)
-    # bridge deck and arches
-    cv.rect(x, y + h - 26, w, 6, (12, 14, 22))
-    for ax in (40, 130, 220):
-        cv.line(x + ax, y + h - 26, x + ax + 45, y + h - 26, (12, 14, 22), 3)
-    cv.line(x + 40, y + h - 26, x + 62, y + h - 58, (12, 14, 22), 3)
-    cv.line(x + 85, y + h - 26, x + 62, y + h - 58, (12, 14, 22), 3)
-    cv.line(x + 130, y + h - 26, x + 152, y + h - 62, (12, 14, 22), 3)
-    cv.line(x + 175, y + h - 26, x + 152, y + h - 62, (12, 14, 22), 3)
-    cv.line(x + 220, y + h - 26, x + 242, y + h - 56, (12, 14, 22), 3)
-    cv.line(x + 265, y + h - 26, x + 242, y + h - 56, (12, 14, 22), 3)
-    # explosion bursts
-    for ex, ey, r in [(62, 52, 14), (152, 46, 17), (242, 54, 12)]:
-        cv.disc(x + ex, y + ey, r + 6, ORANGE, 0.35)
-        cv.disc(x + ex, y + ey, r, (240, 150, 40))
-        cv.disc(x + ex, y + ey, r - 6, (250, 210, 90))
+    scene_h = h - 24
+    cv.vgrad(x, y, w, scene_h, NIGHT, NIGHT2)
+    # stars
+    for sx, sy in [(14, 12), (60, 8), (110, 16), (160, 8), (210, 14),
+                   (260, 10), (300, 18), (40, 28), (140, 26), (240, 30),
+                   (90, 34), (190, 34), (280, 34)]:
+        cv.disc(x + sx, y + sy, 1, (235, 235, 225))
+    # dotted missile trails curving down onto the outer bridges
+    for k in range(9):
+        t = k / 8.0
+        cv.disc(x + int(18 + t * 40), y + int(6 + t * 34), 2,
+                (255, 255, 255))
+    for k in range(9):
+        t = k / 8.0
+        cv.disc(x + int(302 - t * 40), y + int(6 + t * 34), 2,
+                (255, 255, 255))
+    # city skyline silhouette behind the bridges, lit windows
+    for bx, bw, bh in [(6, 22, 26), (32, 16, 18), (52, 20, 30), (76, 14, 16),
+                       (180, 18, 24), (202, 22, 32), (228, 14, 18),
+                       (246, 20, 28), (270, 18, 20), (292, 22, 26)]:
+        cv.rect(x + bx, y + 62 - bh, bw, bh, (10, 14, 26))
+        for wy in range(62 - bh + 4, 60, 8):
+            for wx in range(bx + 4, bx + bw - 3, 7):
+                cv.set(x + wx, y + wy, GOLD)
+    # river: the wide band the three bridges cross
+    cv.rect(x, y + 62, w, scene_h - 62, (24, 52, 96))
+    for ry in (68, 76, 84):
+        cv.line(x + 8, y + ry, x + w - 8, y + ry, (70, 110, 160), 1)
+    # three bridges, each with its own fireball on the deck
+    spans = [(16, 100), (118, 202), (220, 304)]
+    fires = [(58, 44, 13), (160, 40, 15), (262, 46, 12)]
+    for (bx0, bx1), (fx, fy, fr) in zip(spans, fires):
+        mid = (bx0 + bx1) // 2
+        cv.rect(x + bx0 + 4, y + 62, 4, scene_h - 62, (12, 14, 22))
+        cv.rect(x + bx1 - 8, y + 62, 4, scene_h - 62, (12, 14, 22))
+        cv.rect(x + bx0, y + 60, bx1 - bx0, 4, (12, 14, 22))
+        cv.line(x + bx0 + 2, y + 60, x + mid, y + 46, (12, 14, 22), 2)
+        cv.line(x + mid, y + 46, x + bx1 - 2, y + 60, (12, 14, 22), 2)
+        cv.disc(x + fx, y + fy, fr + 7, ORANGE, 0.35)
+        cv.disc(x + fx, y + fy, fr, (240, 150, 40))
+        cv.disc(x + fx, y + fy, fr - 6, (250, 210, 90))
         for dx, dy in [(-1, -1), (1, -1), (-1, 1), (1, 1), (0, -1), (0, 1)]:
-            cv.line(x + ex, y + ey, x + ex + dx * (r + 12), y + ey + dy * (r + 12),
-                    (250, 200, 90), 1)
-    # missile trails
-    cv.line(x + 20, y + 10, x + 55, y + 44, (255, 255, 255), 1)
-    cv.line(x + 300, y + 8, x + 258, y + 44, (255, 255, 255), 1)
-    cv.disc(x + 20, y + 10, 2, (255, 255, 255))
-    cv.disc(x + 300, y + 8, 2, (255, 255, 255))
+            cv.line(x + fx, y + fy, x + fx + dx * (fr + 12),
+                    y + fy + dy * (fr + 12), (250, 200, 90), 1)
+    _hero_banner(cv, fonts, x, y, w, h, "KYIV \u2014 3 BRIDGES HIT")
 
 
 def draw_cyclone(cv, fonts, x, y, w, h):
-    cv.vgrad(x, y, w, h, (90, 140, 185), SEA)
-    # coastline (sand) bottom right
-    cv.polygon([(x + 170, y + h), (x + 200, y + 78), (x + 240, y + 92),
-                (x + 280, y + 80), (x + w, y + 96), (x + w, y + h)],
-               (214, 196, 150))
-    cv.polygon([(x + 200, y + 78), (x + 240, y + 92), (x + 280, y + 80),
-                (x + w, y + 96), (x + w, y + 88), (x + 280, y + 72),
-                (x + 240, y + 84), (x + 200, y + 70)], (240, 225, 180))
-    # spiral
-    cx, cy = x + 120, y + 62
-    for r in range(8, 58, 9):
+    scene_h = h - 24
+    cv.vgrad(x, y, w, scene_h, (90, 140, 185), SEA)
+    # land: India coast on the right, a clear sand curve with beach edge
+    cv.polygon([(x + 218, y), (x + 250, y + 20), (x + 238, y + 44),
+                (x + 262, y + 62), (x + 250, y + 80), (x + 272, y + scene_h),
+                (x + w, y + scene_h), (x + w, y)], (214, 196, 150))
+    cv.polygon([(x + 218, y), (x + 250, y + 20), (x + 238, y + 44),
+                (x + 262, y + 62), (x + 250, y + 80), (x + 272, y + scene_h),
+                (x + 262, y + scene_h), (x + 242, y + 78), (x + 252, y + 60),
+                (x + 228, y + 42), (x + 240, y + 18), (x + 212, y)],
+               (240, 225, 180))
+    # storm spiral with a clear eye
+    cx, cy = x + 118, y + 46
+    for r in range(10, 56, 8):
         a0 = r * 0.35
         pts = []
         for k in range(0, 26):
             a = a0 + k * 0.22
             rr = r * (1 - k * 0.012)
             pts.append((int(cx + rr * 0.95 * _cos(a)), int(cy + rr * 0.8 * _sin(a))))
-        cv.polyline(pts, (240, 244, 248), 2)
-    cv.disc(cx, cy, 7, (240, 244, 248))
-    # rain
-    for rx, ry in [(30, 20), (60, 40), (90, 15), (250, 30), (280, 55), (210, 20),
-                   (40, 90), (300, 90), (260, 110), (20, 110)]:
+        cv.polyline(pts, (240, 244, 248), 3)
+    cv.disc(cx, cy, 9, (240, 244, 248))
+    cv.disc(cx, cy, 5, (40, 80, 130))
+    # landfall marker: red dot on the coast + GOPALPUR label
+    lx, ly = x + 236, y + 44
+    cv.disc(lx, ly, 7, RED)
+    cv.ring(lx, ly, 7, (255, 255, 255), 2)
+    cv.rect(x + 212, y + 10, 78, 16, (255, 255, 255))
+    cv.rect_outline(x + 212, y + 10, 78, 16, RED, 1)
+    draw_centered(cv, fonts, "sans_bold", 10, x + 251, y + 13, "GOPALPUR",
+                  RED)
+    # water label
+    draw_text(cv, fonts, "sans_bold", 10, x + 10, y + scene_h - 14,
+              "BAY OF BENGAL", (235, 244, 250))
+    # rain streaks
+    for rx, ry in [(30, 14), (60, 30), (90, 10), (180, 16), (200, 34),
+                   (40, 70), (160, 72), (90, 66)]:
         cv.line(x + rx, y + ry, x + rx - 6, y + ry + 12, (200, 220, 235), 1)
-    # land label area: small houses
-    for hx in (215, 245, 272):
-        cv.rect(x + hx, y + 108, 14, 10, (120, 70, 50))
-        cv.polygon([(x + hx - 2, y + 108), (x + hx + 7, y + 100),
-                    (x + hx + 16, y + 108)], (90, 50, 40))
+    _hero_banner(cv, fonts, x, y, w, h, "CYCLONE AKVAN \u2014 LANDFALL 8 AM")
 
 
 def _cos(a):
@@ -374,229 +418,243 @@ def _sin(a):
 
 
 def draw_selloff(cv, fonts, x, y, w, h):
-    cv.rect(x, y, w, h, (250, 246, 238))
-    # grid
-    for gy in range(4):
-        yy = y + 18 + gy * 26
-        cv.line(x + 8, yy, x + w - 8, yy, (220, 214, 200), 1)
+    scene_h = h - 24
+    cv.rect(x, y, w, scene_h, (18, 28, 48))
     # descending bars
     vals = [86, 74, 78, 60, 52, 40, 30]
-    bw = (w - 24) // len(vals)
+    bw = (w - 150) // len(vals)
     for i, v in enumerate(vals):
-        bx = x + 12 + i * bw
-        bh = int(v * (h - 40) / 100)
-        cv.rect(bx, y + h - 14 - bh, bw - 6, bh, (190, 60, 45) if i >= 4 else (210, 120, 90))
+        bx = x + 10 + i * bw
+        bh = int(v * (scene_h - 30) / 100)
+        cv.rect(bx, y + scene_h - 6 - bh, bw - 5, bh,
+                (200, 60, 45) if i >= 4 else (214, 120, 70))
     # falling line
-    pts = [(x + 16, y + 16), (x + 60, y + 30), (x + 105, y + 26),
-           (x + 150, y + 48), (x + 195, y + 62), (x + 240, y + 74),
-           (x + 285, y + 96), (x + w - 12, y + h - 22)]
-    cv.polyline(pts, RED_DARK, 3)
+    pts = [(x + 14, y + 12), (x + 44, y + 24), (x + 74, y + 20),
+           (x + 104, y + 40), (x + 134, y + 52), (x + 164, y + 64)]
+    cv.polyline(pts, (255, 90, 70), 3)
     for px, py in pts:
-        cv.disc(px, py, 3, RED_DARK)
-    # down arrow
-    ax, ay = x + w - 34, y + 8
-    cv.line(ax + 8, ay, ax + 8, ay + 14, RED, 3)
-    cv.polygon([(ax - 2, ay + 12), (ax + 18, ay + 12), (ax + 8, ay + 26)],
-               RED)
+        cv.disc(px, py, 3, (255, 90, 70))
+    # market list box (top right): the four Friday closes, readable
+    lx, ly, lw, lh = x + w - 128, y + 8, 120, 60
+    cv.rect(lx, ly, lw, lh, (255, 255, 255))
+    cv.rect_outline(lx, ly, lw, lh, RED, 2)
+    markets = [("Taipei", "-6.2%"), ("Seoul", "-5.2%"),
+               ("Tokyo", "-5.1%"), ("Hong Kong", "-1.9%")]
+    for i, (name, val) in enumerate(markets):
+        yy = ly + 5 + i * 13
+        draw_text(cv, fonts, "sans_bold", 10, lx + 6, yy, name, INK)
+        vw = text_width(fonts, "sans_bold", 10, val)
+        draw_text(cv, fonts, "sans_bold", 10, lx + lw - 6 - int(vw), yy, val,
+                  RED)
+    _hero_banner(cv, fonts, x, y, w, h, "AI SELL-OFF \u2014 ASIA, FRIDAY'S CLOSE")
 
 
 def draw_ukeu(cv, fonts, x, y, w, h):
-    cv.rect(x, y, w, h, TINT)
-    # Union Jack (simplified)
-    fx, fy, fw, fh = x + 12, y + 14, 74, 44
+    cv.rect(x, y, w, h - 18, TINT)
+    # Union Jack (left, bigger)
+    fx, fy, fw, fh = x + 8, y + 8, 78, 46
     cv.rect(fx, fy, fw, fh, (30, 60, 130))
     cv.line(fx, fy, fx + fw, fy + fh, (255, 255, 255), 6)
     cv.line(fx + fw, fy, fx, fy + fh, (255, 255, 255), 6)
     cv.rect(fx + fw // 2 - 4, fy, 8, fh, (200, 40, 40))
     cv.rect(fx, fy + fh // 2 - 4, fw, 8, (200, 40, 40))
-    # EU flag
-    ex, ey, ew, eh = x + w - 86, y + 14, 74, 44
+    # EU flag (right)
+    ex, ey, ew, eh = x + w - 86, y + 8, 78, 46
     cv.rect(ex, ey, ew, eh, (20, 50, 130))
     for k in range(12):
         a = k * 3.14159 / 6
-        sx = int(ex + ew / 2 + 13 * _cos(a))
-        sy = int(ey + eh / 2 + 13 * _sin(a))
+        sx = int(ex + ew / 2 + 14 * _cos(a))
+        sy = int(ey + eh / 2 + 14 * _sin(a))
         cv.disc(sx, sy, 2, GOLD)
-    # gold link arc
-    cv.line(x + 92, y + 36, x + w - 92, y + 36, GOLD, 3)
-    cv.disc(x + w // 2, y + 36, 5, GOLD)
-    draw_centered(cv, fonts, "sans_bold", 10, x + w // 2, y + h - 16,
-                  "DEAL IN BRUSSELS", INK)
+    # big green check badge in the middle
+    cx, cy = x + w // 2, y + 31
+    cv.disc(cx, cy, 15, (255, 255, 255))
+    cv.disc(cx, cy, 13, GREEN)
+    cv.line(cx - 6, cy, cx - 1, cy + 5, (255, 255, 255), 3)
+    cv.line(cx - 1, cy + 5, cx + 7, cy - 5, (255, 255, 255), 3)
+    _feature_caption(cv, fonts, x, y, w, h, "THE RESET DEAL IS DONE")
 
 
 def draw_cop(cv, fonts, x, y, w, h):
-    cv.rect(x, y, w, h, TINT)
-    # globe
-    cx, cy, r = x + 52, y + 36, 26
+    cv.rect(x, y, w, h - 18, TINT)
+    # globe (left, bigger)
+    cx, cy, r = x + 46, y + 31, 26
     cv.disc(cx, cy, r, (90, 150, 200))
     cv.polygon([(cx - 18, cy - 8), (cx - 4, cy - 16), (cx + 8, cy - 6),
                 (cx - 2, cy + 4), (cx - 14, cy + 2)], GREEN)
     cv.polygon([(cx + 4, cy + 8), (cx + 18, cy + 2), (cx + 16, cy + 16),
                 (cx + 2, cy + 20), (cx - 4, cy + 12)], GREEN)
     cv.ring(cx, cy, r, BLUE, 2)
-    # thermometer
-    tx, ty = x + 108, y + 12
-    cv.rect(tx, ty, 10, 40, (255, 255, 255))
-    cv.rect_outline(tx, ty, 10, 40, INK, 1)
-    cv.rect(tx + 2, ty + 22, 6, 16, RED)
-    cv.disc(tx + 5, ty + 44, 8, RED)
-    cv.disc(tx + 5, ty + 44, 5, (255, 120, 100))
-    # empty document
-    dx, dy = x + 138, y + 14
-    cv.rect(dx, dy, 42, 44, (255, 255, 255))
-    cv.rect_outline(dx, dy, 42, 44, INK, 1)
-    for i in range(3):
-        cv.line(dx + 6, dy + 10 + i * 8, dx + 36, dy + 10 + i * 8, (200, 196, 186), 2)
-    cv.line(dx + 6, dy + 8, dx + 36, dy + 50, RED, 2)
-    cv.line(dx + 36, dy + 8, dx + 6, dy + 50, RED, 2)
-    draw_centered(cv, fonts, "sans_bold", 10, x + w // 2, y + h - 16,
-                  "NO DEAL ON THE LAST DAY", INK)
+    # thermometer (middle)
+    tx, ty = x + 96, y + 8
+    cv.rect(tx, ty, 10, 36, (255, 255, 255))
+    cv.rect_outline(tx, ty, 10, 36, INK, 1)
+    cv.rect(tx + 2, ty + 18, 6, 16, RED)
+    cv.disc(tx + 5, ty + 40, 8, RED)
+    cv.disc(tx + 5, ty + 40, 5, (255, 120, 100))
+    # red NO DEAL stamp (right)
+    sx, sy, sw, sh = x + 118, y + 30, 66, 24
+    cv.rect(sx, sy, sw, sh, (255, 255, 255))
+    cv.rect_outline(sx, sy, sw, sh, RED, 2)
+    draw_centered(cv, fonts, "sans_bold", 11, sx + sw // 2, sy + 6,
+                  "NO DEAL", RED)
+    _feature_caption(cv, fonts, x, y, w, h, "NO DEAL ON THE LAST DAY")
 
 
 def draw_japan(cv, fonts, x, y, w, h):
-    cv.rect(x, y, w, h, TINT)
-    vals = [30, 38, 34, 46, 54, 62]
-    bw = (w - 24) // len(vals)
+    cv.rect(x, y, w, h - 18, TINT)
+    # big red sun (left)
+    cv.disc(x + 34, y + 30, 20, (200, 40, 40))
+    # rising bars (middle)
+    vals = [22, 30, 28, 38, 48]
     for i, v in enumerate(vals):
-        bx = x + 12 + i * bw
-        bh = int(v * (h - 34) / 100)
-        cv.rect(bx, y + h - 18 - bh, bw - 5, bh, GREEN if i < 5 else RED)
-    # yen sign
-    draw_centered(cv, fonts, "sans_bold", 22, x + w - 34, y + 6, "\u00a5", INK)
-    draw_centered(cv, fonts, "sans_bold", 10, x + w // 2, y + h - 16,
-                  "PRICES UP 2.3%", INK)
+        bx = x + 64 + i * 18
+        bh = int(v * 44 / 60)
+        cv.rect(bx, y + 56 - bh, 13, bh, RED if i == 4 else GREEN)
+    # big yen sign (top right)
+    draw_text(cv, fonts, "sans_bold", 24, x + 158, y + 4, "\u00a5", INK)
+    _feature_caption(cv, fonts, x, y, w, h, "PRICES UP 2.3%")
 
 
 def draw_cricket(cv, fonts, x, y, w, h):
-    cv.rect(x, y, w, h, (120, 170, 100))
+    cv.rect(x, y, w, h - 18, (120, 170, 100))
     # pitch
-    cv.rect(x + 30, y + 8, w - 60, h - 20, (205, 180, 130))
+    cv.rect(x + 16, y + 6, 96, 50, (205, 180, 130))
     # stumps
-    for sx in (x + 44, x + 50, x + 56):
-        cv.line(sx, y + 16, sx, y + 34, (230, 200, 90), 2)
-    cv.line(x + 44, y + 15, x + 56, y + 15, (230, 200, 90), 2)
-    # bat (angled)
-    cv.polygon([(x + 120, y + 18), (x + 132, y + 14), (x + 150, y + 40),
-                (x + 140, y + 46)], (150, 105, 60))
-    cv.line(x + 126, y + 16, x + 116, y + 6, (120, 85, 50), 3)
+    for sx in (x + 28, x + 34, x + 40):
+        cv.line(sx, y + 12, sx, y + 28, (230, 200, 90), 2)
+    cv.line(x + 28, y + 11, x + 40, y + 11, (230, 200, 90), 2)
+    # bat (angled, big)
+    cv.polygon([(x + 76, y + 14), (x + 88, y + 10), (x + 106, y + 38),
+                (x + 96, y + 44)], (150, 105, 60))
+    cv.line(x + 82, y + 12, x + 72, y + 2, (120, 85, 50), 3)
     # ball
-    cv.disc(x + 162, y + 52, 6, (180, 40, 30))
-    cv.disc(x + 160, y + 50, 2, (240, 120, 100))
-    draw_centered(cv, fonts, "sans_bold", 10, x + w // 2, y + h - 16,
-                  "A CENTURY IN 3 FORMATS", INK)
+    cv.disc(x + 122, y + 44, 7, (180, 40, 30))
+    cv.disc(x + 120, y + 42, 2, (240, 120, 100))
+    # big 118 on the field
+    draw_text(cv, fonts, "sans_bold", 26, x + 138, y + 14, "118", INK)
+    _feature_caption(cv, fonts, x, y, w, h, "A CENTURY IN 3 FORMATS")
 
 
 def draw_oil(cv, fonts, x, y, w, h):
-    cv.vgrad(x, y, w, h, (240, 200, 130), (225, 170, 95))
-    cv.disc(x + w - 34, y + 22, 14, (250, 220, 120))
-    # derrick
-    bx, by = x + 70, y + h - 16
-    cv.polygon([(bx, by - 52), (bx + 44, by - 52), (bx + 30, by),
+    cv.vgrad(x, y, w, h - 18, (240, 200, 130), (225, 170, 95))
+    # big sun
+    cv.disc(x + w - 30, y + 18, 16, (250, 220, 120))
+    cv.ring(x + w - 30, y + 18, 16, (230, 190, 90), 2)
+    # derrick (bigger, bolder)
+    bx, by = x + 66, y + 58
+    cv.polygon([(bx, by - 48), (bx + 46, by - 48), (bx + 32, by),
                 (bx + 14, by)], (40, 36, 32))
-    cv.line(bx + 6, by - 12, bx + 38, by - 40, (90, 80, 70), 2)
-    cv.line(bx + 38, by - 12, bx + 6, by - 40, (90, 80, 70), 2)
-    cv.line(bx + 22, by - 52, bx + 22, by - 62, (40, 36, 32), 3)
+    cv.line(bx + 8, by - 10, bx + 38, by - 38, (90, 80, 70), 3)
+    cv.line(bx + 38, by - 10, bx + 8, by - 38, (90, 80, 70), 3)
+    cv.line(bx + 23, by - 48, bx + 23, by - 56, (40, 36, 32), 4)
     # ground
-    cv.rect(x, y + h - 16, w, 8, (180, 130, 70))
-    draw_centered(cv, fonts, "sans_bold", 10, x + w // 2, y + h - 16,
-                  "FIRST CRUDE DUE 1 DEC", INK)
+    cv.rect(x, y + 58, w, 4, (180, 130, 70))
+    _feature_caption(cv, fonts, x, y, w, h, "FIRST CRUDE DUE 1 DEC")
 
 
 def draw_ballot(cv, fonts, x, y, w, h):
-    cv.rect(x, y, w, h, TINT)
-    # ballot box
-    bx, by, bw, bh = x + 62, y + 16, 68, 40
+    cv.rect(x, y, w, h - 18, TINT)
+    # 3RD TERM stamp (top right, clear of the mini-tag)
+    sx, sy, sw, sh = x + 128, y + 4, 56, 18
+    cv.rect(sx, sy, sw, sh, (255, 255, 255))
+    cv.rect_outline(sx, sy, sw, sh, BLUE, 2)
+    draw_centered(cv, fonts, "sans_bold", 9, sx + sw // 2, sy + 4,
+                  "3RD TERM", BLUE)
+    # ballot box (bigger)
+    bx, by, bw, bh = x + 52, y + 20, 72, 34
     cv.rect(bx, by, bw, bh, BLUE)
     cv.rect(bx, by, bw, 8, (24, 58, 92))
-    cv.rect(bx + 20, by + 2, 28, 4, (12, 12, 12))
+    cv.rect(bx + 22, by + 2, 28, 4, (12, 12, 12))
     # paper going in
-    cv.polygon([(bx + 26, by - 8), (bx + 48, by - 8), (bx + 48, by + 4),
-                (bx + 26, by + 4)], (255, 255, 255))
-    cv.line(bx + 30, by - 4, bx + 44, by - 4, GRAY, 1)
-    # check mark
-    cv.line(bx + 78, by + 18, bx + 86, by + 28, GREEN, 3)
-    cv.line(bx + 86, by + 28, bx + 102, by + 8, GREEN, 3)
-    draw_centered(cv, fonts, "sans_bold", 10, x + w // 2, y + h - 16,
-                  "VOTE 28 FEB 2027", INK)
+    cv.polygon([(bx + 28, by - 10), (bx + 50, by - 10), (bx + 50, by + 4),
+                (bx + 28, by + 4)], (255, 255, 255))
+    cv.line(bx + 32, by - 6, bx + 46, by - 6, GRAY, 1)
+    # green check
+    cv.line(bx + 82, by + 14, bx + 90, by + 24, GREEN, 3)
+    cv.line(bx + 90, by + 24, bx + 106, by + 4, GREEN, 3)
+    _feature_caption(cv, fonts, x, y, w, h, "VOTE 28 FEB 2027")
 
 
 def draw_strike(cv, fonts, x, y, w, h):
-    cv.rect(x, y, w, h, TINT)
-    # marchers
+    cv.rect(x, y, w, h - 18, TINT)
+    # blank placard (left, clear of the mini-tag)
+    cv.rect(x + 40, y + 2, 56, 13, (255, 255, 255))
+    cv.rect_outline(x + 40, y + 2, 56, 13, INK, 1)
+    cv.line(x + 48, y + 8, x + 88, y + 8, RED, 2)
+    cv.line(x + 68, y + 15, x + 68, y + 24, INK, 2)
+    # SCIOPERO placard (right, clear of the mini-tag)
+    cv.rect(x + 112, y + 4, 56, 13, (255, 255, 255))
+    cv.rect_outline(x + 112, y + 4, 56, 13, INK, 1)
+    draw_centered(cv, fonts, "sans_bold", 9, x + 140, y + 6, "SCIOPERO", INK)
+    cv.line(x + 140, y + 17, x + 140, y + 26, INK, 2)
+    # marchers (bigger)
     cols = [(178, 34, 28), (31, 74, 110), (46, 110, 70), (120, 70, 50),
             (90, 90, 110)]
     for i, c in enumerate(cols):
-        px = x + 22 + i * 34
-        cv.disc(px + 8, y + 20, 7, (210, 180, 150))
-        cv.rect(px, y + 28, 16, 22, c)
-        cv.line(px + 2, y + 50, px + 2, y + 60, INK, 2)
-        cv.line(px + 14, y + 50, px + 14, y + 60, INK, 2)
-    # placards
-    cv.rect(x + 30, y + 8, 34, 12, (255, 255, 255))
-    cv.rect_outline(x + 30, y + 8, 34, 12, INK, 1)
-    cv.rect(x + 120, y + 6, 34, 12, (255, 255, 255))
-    cv.rect_outline(x + 120, y + 6, 34, 12, INK, 1)
-    cv.line(x + 46, y + 20, x + 46, y + 26, INK, 2)
-    cv.line(x + 136, y + 18, x + 136, y + 26, INK, 2)
-    draw_centered(cv, fonts, "sans_bold", 10, x + w // 2, y + h - 16,
-                  "1M IN 100+ SQUARES", INK)
+        px = x + 16 + i * 34
+        cv.disc(px + 9, y + 24, 7, (210, 180, 150))
+        cv.rect(px, y + 32, 18, 22, c)
+        cv.line(px + 3, y + 54, px + 3, y + 61, INK, 2)
+        cv.line(px + 15, y + 54, px + 15, y + 61, INK, 2)
+    _feature_caption(cv, fonts, x, y, w, h, "1M IN 100+ SQUARES")
 
 
 def draw_nvidia(cv, fonts, x, y, w, h):
-    cv.rect(x, y, w, h, TINT)
-    # chip
-    cx, cy, s = x + 62, y + 10, 44
+    cv.rect(x, y, w, h - 18, TINT)
+    # chip (bigger, left)
+    cx, cy, s = x + 46, y + 8, 46
     for k in range(5):
-        cv.line(cx - 8, cy + 5 + k * 8, cx - 2, cy + 5 + k * 8, INK, 2)
-        cv.line(cx + s + 2, cy + 5 + k * 8, cx + s + 8, cy + 5 + k * 8, INK, 2)
+        cv.line(cx - 8, cy + 5 + k * 9, cx - 2, cy + 5 + k * 9, INK, 2)
+        cv.line(cx + s + 2, cy + 5 + k * 9, cx + s + 8, cy + 5 + k * 9, INK, 2)
     cv.rect(cx, cy, s, s, (20, 60, 40))
     cv.rect_outline(cx, cy, s, s, INK, 2)
     cv.rect(cx + 12, cy + 12, s - 24, s - 24, (60, 140, 90))
-    draw_centered(cv, fonts, "sans_bold", 12, cx + s // 2, cy + s // 2 - 6,
+    draw_centered(cv, fonts, "sans_bold", 13, cx + s // 2, cy + s // 2 - 7,
                   "AI", (255, 255, 255))
-    # red down arrow
-    ax, ay = x + w - 52, y + 10
-    cv.polygon([(ax, ay + 26), (ax + 10, ay + 26), (ax + 10, ay + 44),
-                (ax + 20, ay + 44), (ax + 20, ay + 26), (ax + 30, ay + 26),
-                (ax + 15, ay + 52), (ax, ay + 26)], RED)
-    draw_centered(cv, fonts, "sans_bold", 10, x + w // 2, y + h - 16,
-                  "$491BN WIPED OUT", INK)
+    # big -14% and down arrow (right)
+    draw_text(cv, fonts, "sans_bold", 20, x + 112, y + 10, "-14%", RED)
+    cv.line(x + 130, y + 36, x + 130, y + 50, RED, 3)
+    cv.polygon([(x + 122, y + 48), (x + 138, y + 48), (x + 130, y + 60)],
+               RED)
+    _feature_caption(cv, fonts, x, y, w, h, "-14% IN ONE DAY")
 
 
 def draw_china(cv, fonts, x, y, w, h):
-    cv.rect(x, y, w, h, TINT)
-    # bank building
-    bx, by, bw, bh = x + 52, y + 12, 88, 42
+    cv.rect(x, y, w, h - 18, TINT)
+    # bank building (centre)
+    bx, by, bw, bh = x + 50, y + 16, 80, 38
     cv.polygon([(bx - 6, by), (bx + bw // 2, by - 10), (bx + bw + 6, by)],
                (150, 40, 40))
     cv.rect(bx, by, bw, bh, (235, 225, 205))
     cv.rect_outline(bx, by, bw, bh, INK, 1)
     for i in range(4):
-        cx = bx + 10 + i * 22
+        cx = bx + 10 + i * 20
         cv.rect(cx, by + 6, 8, bh - 12, INK)
     cv.rect(bx - 4, by + bh, bw + 8, 4, INK)
-    draw_centered(cv, fonts, "sans_bold", 10, x + w // 2, y + h - 16,
-                  "3.0% AND 3.5% HELD", INK)
+    # the two rates, big, either side of the bank
+    draw_text(cv, fonts, "sans_bold", 16, x + 4, y + 26, "3.0%", INK)
+    draw_text(cv, fonts, "sans_bold", 16, x + 140, y + 26, "3.5%", INK)
+    _feature_caption(cv, fonts, x, y, w, h, "3.0% AND 3.5% HELD")
 
 
 def draw_tanker(cv, fonts, x, y, w, h):
-    cv.vgrad(x, y, w, h, (140, 180, 210), SEA)
+    cv.vgrad(x, y, w, h - 18, (140, 180, 210), SEA)
     # waves
     for wx in range(x + 6, x + w - 6, 22):
-        cv.line(wx, y + h - 2, wx + 12, y + h - 2, (220, 235, 245), 2)
-    # tanker hull
-    cv.polygon([(x + 30, y + 42), (x + 160, y + 42), (x + 150, y + 60),
-                (x + 40, y + 60)], (30, 30, 36))
-    cv.rect(x + 40, y + 24, 110, 18, (50, 50, 58))
-    cv.rect(x + 130, y + 12, 16, 12, (50, 50, 58))
-    cv.line(x + 138, y + 12, x + 138, y + 2, (50, 50, 58), 3)
-    # fire plume
-    for fx, fy, r, c in [(70, 24, 10, ORANGE), (78, 18, 8, (240, 150, 40)),
-                         (72, 12, 5, (250, 210, 90))]:
+        cv.line(wx, y + 58, wx + 12, y + 58, (220, 235, 245), 2)
+    # tanker hull (bigger)
+    cv.polygon([(x + 24, y + 38), (x + 168, y + 38), (x + 156, y + 58),
+                (x + 36, y + 58)], (30, 30, 36))
+    cv.rect(x + 36, y + 20, 120, 18, (50, 50, 58))
+    cv.rect(x + 132, y + 8, 18, 12, (50, 50, 58))
+    cv.line(x + 141, y + 8, x + 141, y + 0, (50, 50, 58), 3)
+    # big fire plume
+    for fx, fy, r, c in [(66, 20, 12, ORANGE), (76, 12, 9, (240, 150, 40)),
+                         (70, 4, 6, (250, 210, 90))]:
         cv.disc(x + fx, y + fy, r, c, 0.9)
-    cv.disc(x + 80, y + 8, 10, (90, 90, 95), 0.5)
-    draw_centered(cv, fonts, "sans_bold", 10, x + w // 2, y + h - 16,
-                  "8 MILES OFF KHASAB", INK)
+    cv.disc(x + 84, y + 2, 12, (90, 90, 95), 0.5)
+    _feature_caption(cv, fonts, x, y, w, h, "8 MILES OFF KHASAB")
 
 
 # ---------------------------------------------------------------- world map
@@ -671,14 +729,14 @@ def draw_map(cv, fonts, x, y, w, h, pins):
     for lat in (60, 30, 0, -30):
         gy = y + int((75 - lat) / 130 * h)
         cv.line(x, gy, x + w, gy, (190, 205, 218), 1)
-    # pins
+    # pins (bigger, so the numbers read at a glance)
     for num, lon, lat in pins:
         px = x + int((lon + 180) / 360 * w)
         py = y + int((75 - lat) / 130 * h)
-        cv.disc(px, py, 6, RED)
-        cv.ring(px, py, 6, (255, 255, 255), 1)
-        tw = text_width(fonts, "sans_bold", 7, str(num))
-        draw_text(cv, fonts, "sans_bold", 7, int(px - tw / 2), py - 4,
+        cv.disc(px, py, 8, RED)
+        cv.ring(px, py, 8, (255, 255, 255), 1)
+        tw = text_width(fonts, "sans_bold", 9, str(num))
+        draw_text(cv, fonts, "sans_bold", 9, int(px - tw / 2), py - 5,
                   str(num), (255, 255, 255))
 
 
