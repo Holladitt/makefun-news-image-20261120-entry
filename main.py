@@ -31,10 +31,23 @@ BLUE_LT = (120, 165, 200)
 GREEN = (46, 110, 70)
 GOLD = (198, 158, 62)
 ORANGE = (214, 110, 30)
-SKY = (150, 190, 220)
-SEA = (70, 120, 160)
+SKY = (128, 178, 214)
+SEA = (55, 110, 155)
 NIGHT = (22, 34, 58)
 NIGHT2 = (38, 56, 92)
+
+# soft per-feature panel tints (v3: a more colourful page; text stays
+# near-black on these light tints, so readability is not traded away)
+T_UK = (198, 220, 242)       # light blue
+T_COP = (185, 224, 212)      # light teal
+T_JAPAN = (248, 222, 208)    # warm peach
+T_CRICKET = (203, 232, 186)  # light green
+T_OIL = (250, 230, 170)      # warm yellow
+T_BALLOT = (216, 219, 244)   # light lavender
+T_STRIKE = (250, 214, 196)   # light coral
+T_NVIDIA = (205, 232, 222)   # light mint
+T_CHINA = (244, 226, 190)    # light gold
+T_TANKER = (186, 214, 236)   # light sky blue
 
 
 # ---------------------------------------------------------------- canvas
@@ -367,11 +380,11 @@ def draw_kyiv(cv, fonts, x, y, w, h):
 
 def draw_cyclone(cv, fonts, x, y, w, h):
     scene_h = h - 24
-    cv.vgrad(x, y, w, scene_h, (90, 140, 185), SEA)
+    cv.vgrad(x, y, w, scene_h, (70, 130, 180), SEA)
     # land: India coast on the right, a clear sand curve with beach edge
     cv.polygon([(x + 218, y), (x + 250, y + 20), (x + 238, y + 44),
                 (x + 262, y + 62), (x + 250, y + 80), (x + 272, y + scene_h),
-                (x + w, y + scene_h), (x + w, y)], (214, 196, 150))
+                (x + w, y + scene_h), (x + w, y)], (228, 202, 142))
     cv.polygon([(x + 218, y), (x + 250, y + 20), (x + 238, y + 44),
                 (x + 262, y + 62), (x + 250, y + 80), (x + 272, y + scene_h),
                 (x + 262, y + scene_h), (x + 242, y + 78), (x + 252, y + 60),
@@ -427,7 +440,7 @@ def draw_selloff(cv, fonts, x, y, w, h):
         bx = x + 10 + i * bw
         bh = int(v * (scene_h - 30) / 100)
         cv.rect(bx, y + scene_h - 6 - bh, bw - 5, bh,
-                (200, 60, 45) if i >= 4 else (214, 120, 70))
+                (206, 48, 32) if i >= 4 else (222, 108, 52))
     # falling line
     pts = [(x + 14, y + 12), (x + 44, y + 24), (x + 74, y + 20),
            (x + 104, y + 40), (x + 134, y + 52), (x + 164, y + 64)]
@@ -450,7 +463,7 @@ def draw_selloff(cv, fonts, x, y, w, h):
 
 
 def draw_ukeu(cv, fonts, x, y, w, h):
-    cv.rect(x, y, w, h - 18, TINT)
+    cv.rect(x, y, w, h - 18, T_UK)
     # Union Jack (left, bigger)
     fx, fy, fw, fh = x + 8, y + 8, 78, 46
     cv.rect(fx, fy, fw, fh, (30, 60, 130))
@@ -476,7 +489,7 @@ def draw_ukeu(cv, fonts, x, y, w, h):
 
 
 def draw_cop(cv, fonts, x, y, w, h):
-    cv.rect(x, y, w, h - 18, TINT)
+    cv.rect(x, y, w, h - 18, T_COP)
     # globe (left, bigger)
     cx, cy, r = x + 46, y + 31, 26
     cv.disc(cx, cy, r, (90, 150, 200))
@@ -502,7 +515,7 @@ def draw_cop(cv, fonts, x, y, w, h):
 
 
 def draw_japan(cv, fonts, x, y, w, h):
-    cv.rect(x, y, w, h - 18, TINT)
+    cv.rect(x, y, w, h - 18, T_JAPAN)
     # big red sun (left)
     cv.disc(x + 34, y + 30, 20, (200, 40, 40))
     # rising bars (middle)
@@ -517,7 +530,7 @@ def draw_japan(cv, fonts, x, y, w, h):
 
 
 def draw_cricket(cv, fonts, x, y, w, h):
-    cv.rect(x, y, w, h - 18, (120, 170, 100))
+    cv.rect(x, y, w, h - 18, T_CRICKET)
     # pitch
     cv.rect(x + 16, y + 6, 96, 50, (205, 180, 130))
     # stumps
@@ -537,7 +550,7 @@ def draw_cricket(cv, fonts, x, y, w, h):
 
 
 def draw_oil(cv, fonts, x, y, w, h):
-    cv.vgrad(x, y, w, h - 18, (240, 200, 130), (225, 170, 95))
+    cv.vgrad(x, y, w, h - 18, (248, 205, 120), (232, 175, 85))
     # big sun
     cv.disc(x + w - 30, y + 18, 16, (250, 220, 120))
     cv.ring(x + w - 30, y + 18, 16, (230, 190, 90), 2)
@@ -554,7 +567,7 @@ def draw_oil(cv, fonts, x, y, w, h):
 
 
 def draw_ballot(cv, fonts, x, y, w, h):
-    cv.rect(x, y, w, h - 18, TINT)
+    cv.rect(x, y, w, h - 18, T_BALLOT)
     # 3RD TERM stamp (top right, clear of the mini-tag)
     sx, sy, sw, sh = x + 128, y + 4, 56, 18
     cv.rect(sx, sy, sw, sh, (255, 255, 255))
@@ -577,7 +590,7 @@ def draw_ballot(cv, fonts, x, y, w, h):
 
 
 def draw_strike(cv, fonts, x, y, w, h):
-    cv.rect(x, y, w, h - 18, TINT)
+    cv.rect(x, y, w, h - 18, T_STRIKE)
     # blank placard (left, clear of the mini-tag)
     cv.rect(x + 40, y + 2, 56, 13, (255, 255, 255))
     cv.rect_outline(x + 40, y + 2, 56, 13, INK, 1)
@@ -601,7 +614,7 @@ def draw_strike(cv, fonts, x, y, w, h):
 
 
 def draw_nvidia(cv, fonts, x, y, w, h):
-    cv.rect(x, y, w, h - 18, TINT)
+    cv.rect(x, y, w, h - 18, T_NVIDIA)
     # chip (bigger, left)
     cx, cy, s = x + 46, y + 8, 46
     for k in range(5):
@@ -621,7 +634,7 @@ def draw_nvidia(cv, fonts, x, y, w, h):
 
 
 def draw_china(cv, fonts, x, y, w, h):
-    cv.rect(x, y, w, h - 18, TINT)
+    cv.rect(x, y, w, h - 18, T_CHINA)
     # bank building (centre)
     bx, by, bw, bh = x + 50, y + 16, 80, 38
     cv.polygon([(bx - 6, by), (bx + bw // 2, by - 10), (bx + bw + 6, by)],
@@ -639,7 +652,7 @@ def draw_china(cv, fonts, x, y, w, h):
 
 
 def draw_tanker(cv, fonts, x, y, w, h):
-    cv.vgrad(x, y, w, h - 18, (140, 180, 210), SEA)
+    cv.vgrad(x, y, w, h - 18, (125, 175, 215), SEA)
     # waves
     for wx in range(x + 6, x + w - 6, 22):
         cv.line(wx, y + 58, wx + 12, y + 58, (220, 235, 245), 2)
@@ -713,7 +726,7 @@ CONTINENTS = [
 
 
 def draw_map(cv, fonts, x, y, w, h, pins):
-    cv.rect(x, y, w, h, (214, 228, 235))
+    cv.rect(x, y, w, h, (198, 220, 236))
     cv.rect_outline(x, y, w, h, RULE, 1)
     for poly in CONTINENTS:
         pts = []
@@ -721,28 +734,30 @@ def draw_map(cv, fonts, x, y, w, h, pins):
             px = x + int((lon + 180) / 360 * w)
             py = y + int((75 - lat) / 130 * h)
             pts.append((px, py))
-        cv.polygon(pts, (196, 188, 160))
+        cv.polygon(pts, (206, 192, 150))
     # graticule
     for lon in (-120, -60, 0, 60, 120):
         gx = x + int((lon + 180) / 360 * w)
-        cv.line(gx, y, gx, y + h, (190, 205, 218), 1)
+        cv.line(gx, y, gx, y + h, (175, 195, 214), 1)
     for lat in (60, 30, 0, -30):
         gy = y + int((75 - lat) / 130 * h)
-        cv.line(x, gy, x + w, gy, (190, 205, 218), 1)
-    # pins (bigger, so the numbers read at a glance)
+        cv.line(x, gy, x + w, gy, (175, 195, 214), 1)
+    # pins (bigger, bolder, so the numbers read at a glance)
     for num, lon, lat in pins:
         px = x + int((lon + 180) / 360 * w)
         py = y + int((75 - lat) / 130 * h)
-        cv.disc(px, py, 8, RED)
-        cv.ring(px, py, 8, (255, 255, 255), 1)
-        tw = text_width(fonts, "sans_bold", 9, str(num))
-        draw_text(cv, fonts, "sans_bold", 9, int(px - tw / 2), py - 5,
+        cv.disc(px, py, 9, RED)
+        cv.ring(px, py, 9, (255, 255, 255), 1)
+        tw = text_width(fonts, "sans_bold", 11, str(num))
+        draw_text(cv, fonts, "sans_bold", 11, int(px - tw / 2), py - 6,
                   str(num), (255, 255, 255))
 
 
 # ---------------------------------------------------------------- stories
 # Every fact below was verified against a live source on 20-21 Nov 2026.
-# Decks are trimmed so they wrap to at most 3 lines in their column.
+# v3: decks trimmed to at most 2 short lines in their column; ALSO items
+# trimmed to one short line. Only filler words were cut - every fact,
+# number and name is kept.
 
 HEROES = [
     dict(tag="UKRAINE \u00b7 WAR", draw=draw_kyiv,
@@ -768,53 +783,43 @@ HEROES = [
 FEATURES = [
     dict(tag="BRUSSELS", draw=draw_ukeu,
          headline="UK and EU seal the reset deal",
-         deck="Burnham in Brussels: food deal, youth mobility for 100,000 "
-              "under-32s, emissions link. Worth ~\u00a317bn.",
+         deck="Food deal, youth visas, 100,000 under-32s. ~\u00a317bn.",
          source="Reuters \u00b7 CNN"),
     dict(tag="ANTALYA", draw=draw_cop,
          headline="COP31 ends its last day with no deal",
-         deck="The revised draft drops all fossil-fuel references and the "
-              "$120bn figure. Talks run past Friday.",
+         deck="Draft drops fossil fuels and the $120bn figure. Talks run on.",
          source="UN News \u00b7 AP"),
     dict(tag="TOKYO", draw=draw_japan,
          headline="Japan inflation at 2.3%",
-         deck="October CPI rises from 2.1%; core 2.2%. A December rise is in "
-              "view; the Bank of Japan rate is 1.25%.",
+         deck="October CPI 2.3%, core 2.2%. BoJ rate 1.25%.",
          source="Statistics Bureau \u00b7 Reuters"),
     dict(tag="WELLINGTON", draw=draw_cricket,
          headline="Phillips makes 118 in Wellington",
-         deck="Tons in all three formats v India in a year: ODI 106, T20I "
-              "107, Test 118. A first for New Zealand.",
+         deck="ODI 106, T20I 107, Test 118 v India in a year.",
          source="ICC \u00b7 AP"),
     dict(tag="TURKANA", draw=draw_oil,
          headline="Kenya switches on its first oil",
-         deck="Rigs start in Turkana; first crude due 1 December at 20,000 "
-              "barrels a day. Ruto flags off the cargo.",
+         deck="First crude due 1 Dec, 20,000 barrels a day. Ruto flags it off.",
          source="People Daily \u00b7 Pulse"),
     dict(tag="SAN SALVADOR", draw=draw_ballot,
          headline="Bukele files for a third term",
-         deck="The president registers his candidacy with VP Felix Ulloa "
-              "beside him. The vote is on 28 February 2027.",
+         deck="Registers with VP Felix Ulloa beside him. Vote is 28 Feb 2027.",
          source="Reuters \u00b7 AP"),
     dict(tag="ROME", draw=draw_strike,
          headline="Italy stops for a general strike",
-         deck="CGIL's 24-hour strike over the 2027 budget draws more than a "
-              "million people to 100-plus squares.",
+         deck="CGIL strike over the 2027 budget draws 1m+ to 100+ squares.",
          source="Reuters \u00b7 CGIL"),
     dict(tag="NEW YORK", draw=draw_nvidia,
          headline="Nvidia falls 14% in a day",
-         deck="Shares drop to $125.53 after Reuters reports the SEC is "
-              "examining its accounting. $491bn wiped out.",
+         deck="Shares $125.53; SEC examines accounting. $491bn wiped out.",
          source="Reuters \u00b7 Motley Fool"),
     dict(tag="BEIJING", draw=draw_china,
          headline="China holds its lending rates",
-         deck="LPR held at 3.0% and 3.5%, unchanged for an 18th straight "
-              "month. The repo is the anchor.",
+         deck="LPR held at 3.0% and 3.5% for an 18th straight month.",
          source="Xinhua \u00b7 Reuters"),
     dict(tag="KHASAB", draw=draw_tanker,
          headline="Tanker ablaze off Oman",
-         deck="A tanker is struck by an unknown projectile 8 nautical miles "
-              "north of Khasab. Fire on board; no casualties.",
+         deck="Hit 8 miles north of Khasab; fire on board, no casualties.",
          source="UKMTO \u00b7 Reuters"),
 ]
 
@@ -828,28 +833,28 @@ STATS = [
 ]
 
 ALSO = [
-    ("Lviv", "station strike kills two, ten in hospital", "Mayor Sadovyi"),
-    ("Poland", "Kh-101 missile crashes in Nowy Lipowiec", "Reuters"),
+    ("Lviv", "rail station strike kills two", "Mayor Sadovyi"),
+    ("Poland", "Kh-101 crashes in Nowy Lipowiec", "Reuters"),
     ("Ganjam", "209 mm rain falls at Patrapur", "IMD"),
-    ("Seoul", "KOSPI falls 5.2% as chipmakers slide", "Anadolu"),
+    ("Seoul", "KOSPI falls 5.2%, chipmakers slide", "Anadolu"),
     ("Tokyo", "SoftBank down 14.5%, worst since 2024", "CNBC"),
     ("Hong Kong", "Hang Seng off 1.9%", "Anadolu"),
-    ("New York", "Nasdaq -5.3%, S&P 500 in correction", "Investopedia"),
-    ("UK-EU", "tuition fees parked in the reset deal", "Reuters"),
+    ("New York", "Nasdaq -5.3%, S&P 500 corrects", "Investopedia"),
+    ("UK-EU", "tuition fees parked in reset deal", "Reuters"),
     ("COP31", "draft cut from 144 to 80 paragraphs", "AP"),
-    ("Japan", "BoJ rate 1.25%; December rise in view", "Reuters"),
-    ("Kenya", "Ruto names crude's trading name 1 Dec", "People Daily"),
-    ("Bukele", "four rivals line up for 28 Feb vote", "Reuters"),
-    ("Italy", "rail freight halts 23 hours from 21:00", "ANSA"),
+    ("Japan", "BoJ rate 1.25%; Dec rise in view", "Reuters"),
+    ("Kenya", "Ruto names crude's trading name", "People Daily"),
+    ("Bukele", "four rivals line up for 28 Feb", "Reuters"),
+    ("Italy", "rail freight halts 23 hours", "ANSA"),
     ("Nvidia", "seventh straight weekly fall", "Dealroom"),
-    ("China", "overnight repo is the policy anchor", "Reuters"),
+    ("China", "overnight repo is policy anchor", "Reuters"),
     ("Hormuz", "shipping traffic down 15%", "ShipUniverse"),
-    ("Pakistan", "India holds its Indus treaty stand", "Asia Daily"),
-    ("Seoul", "impeachment motion due at court by 7 Dec", "JoongAng"),
+    ("Pakistan", "India holds its Indus stand", "Asia Daily"),
+    ("Seoul", "impeachment motion due by 7 Dec", "JoongAng"),
     ("Argentina", "risk up 139 points in a day", "J.P. Morgan"),
     ("Barcelona", "8.2% saw tumours vanish", "ecancer"),
-    ("Las Vegas", "Russell fastest in practice, 1:34.041", "Formula 1"),
-    ("Anthropic", "shares slide on day two after IPO", "Investopedia"),
+    ("Las Vegas", "Russell fastest, 1:34.041", "Formula 1"),
+    ("Anthropic", "shares slide on day two", "Investopedia"),
 ]
 
 # (number, lon, lat) - story order 1-13; Wellington pin nudged west so
@@ -863,9 +868,8 @@ PINS = [
 ]
 
 DATE_CHECK = [
-    "DATE CHECK \u2014 Left out: Uganda's Ebola measures, announced Thursday "
-    "19 November; BepiColombo's Mercury capture, due Saturday 21 November, "
-    "had not happened yet.",
+    "DATE CHECK \u2014 Left out: Uganda's Ebola measures (Thu 19 Nov); "
+    "BepiColombo's Mercury capture (Sat 21 Nov) not yet happened.",
     "Everything on this page happened, or was first reported, on Friday "
     "20 November 2026.",
 ]
@@ -884,14 +888,14 @@ def _note(msg):
 
 def _tag_band(cv, fonts, x, y, w, text):
     cv.rect(x, y, w, 20, RED)
-    draw_centered(cv, fonts, "sans_bold", 11, x + w // 2, y + 5, text,
+    draw_centered(cv, fonts, "sans_bold", 12, x + w // 2, y + 4, text,
                   (255, 255, 255))
 
 
 def _mini_tag(cv, fonts, x, y, text):
-    tw = text_width(fonts, "sans_bold", 8, text)
-    cv.rect(x, y, int(tw) + 10, 14, RED)
-    draw_text(cv, fonts, "sans_bold", 8, x + 5, y + 3, text,
+    tw = text_width(fonts, "sans_bold", 9.5, text)
+    cv.rect(x, y, int(tw) + 10, 15, RED)
+    draw_text(cv, fonts, "sans_bold", 9.5, x + 5, y + 3, text,
               (255, 255, 255))
 
 
@@ -910,7 +914,7 @@ def build(fonts):
     # masthead + kicker
     draw_centered(cv, fonts, "serif_bold", 54, 512, 42,
                   "Friday 20 November 2026", INK)
-    draw_centered(cv, fonts, "serif", 15, 512, 100,
+    draw_centered(cv, fonts, "serif", 16, 512, 100,
                   "Missiles over Kyiv, a cyclone ashore in Odisha, and the "
                   "AI trade unwinds from Taipei to New York", INK_SOFT)
     cv.rect(X0, 122, CW, 3, RULE)
@@ -922,68 +926,71 @@ def build(fonts):
         cv.rect(bx, 133, 160, 48, TINT)
         cv.rect_outline(bx, 133, 160, 48, RULE, 1)
         draw_centered(cv, fonts, "serif_bold", 26, bx + 80, 138, num, INK)
-        draw_centered(cv, fonts, "sans_bold", 8, bx + 80, 168, label,
+        draw_centered(cv, fonts, "sans_bold", 9.5, bx + 80, 167, label,
                       INK_SOFT)
 
     # heroes
     for i, st in enumerate(HEROES):
         hx = X0 + i * 330
         _tag_band(cv, fonts, hx, 189, 320, st["tag"])
-        st["draw"](cv, fonts, hx, 209, 320, 118)
-        hl = wrap_text(fonts, "serif_bold", 20, st["headline"], 320)
+        st["draw"](cv, fonts, hx, 209, 320, 112)
+        hl = wrap_text(fonts, "serif_bold", 22, st["headline"], 320)
         _note("hero %d headline lines: %d" % (i + 1, len(hl)))
-        draw_block(cv, fonts, "serif_bold", 20, hx, 331, st["headline"],
-                   320, 24, INK)
-        dk = wrap_text(fonts, "sans", 11.5, st["deck"], 320)
+        draw_block(cv, fonts, "serif_bold", 22, hx, 325, st["headline"],
+                   320, 26, INK)
+        dk = wrap_text(fonts, "sans", 13, st["deck"], 320)
         _note("hero %d deck lines: %d" % (i + 1, len(dk)))
-        draw_block(cv, fonts, "sans", 11.5, hx, 383, st["deck"], 320, 15,
-                   INK_SOFT)
-        draw_text(cv, fonts, "sans", 9, hx, 431, st["source"], GRAY)
+        draw_block(cv, fonts, "sans", 13, hx, 379, st["deck"], 320, 17,
+                   INK)
+        draw_text(cv, fonts, "sans", 10.5, hx, 434, st["source"], INK_SOFT)
 
     # features: two rows of five
     for row in range(2):
         for col in range(5):
             st = FEATURES[row * 5 + col]
             fx = X0 + col * 197
-            fy = 452 + row * 180
-            st["draw"](cv, fonts, fx, fy, 192, 80)
+            fy = 452 + row * 172
+            st["draw"](cv, fonts, fx, fy, 192, 76)
             _mini_tag(cv, fonts, fx, fy, st["tag"])
-            hl = wrap_text(fonts, "serif_bold", 13, st["headline"], 192)
+            hl = wrap_text(fonts, "serif_bold", 15, st["headline"], 192)
             _note("feature %d headline lines: %d" % (row * 5 + col + 1,
                                                       len(hl)))
-            draw_block(cv, fonts, "serif_bold", 13, fx, fy + 84,
-                       st["headline"], 192, 16, INK)
-            dk = wrap_text(fonts, "sans", 10, st["deck"], 192)
+            draw_block(cv, fonts, "serif_bold", 15, fx, fy + 80,
+                       st["headline"], 192, 18, INK)
+            dk = wrap_text(fonts, "sans", 11.5, st["deck"], 192)
             _note("feature %d deck lines: %d" % (row * 5 + col + 1, len(dk)))
-            draw_block(cv, fonts, "sans", 10, fx, fy + 119, st["deck"],
-                       192, 13, INK_SOFT)
-            draw_text(cv, fonts, "sans", 8.5, fx, fy + 161, st["source"],
-                      GRAY)
+            draw_block(cv, fonts, "sans", 11.5, fx, fy + 118, st["deck"],
+                       192, 15, INK)
+            draw_text(cv, fonts, "sans", 9.5, fx, fy + 152, st["source"],
+                      INK_SOFT)
 
     # bottom: map + also list
-    draw_tracked(cv, fonts, "sans_bold", 11, X0, 814,
+    draw_tracked(cv, fonts, "sans_bold", 12.5, X0, 800,
                  "WHERE IT HAPPENED \u00b7 PINS 1\u201313", INK, 1.0)
-    draw_tracked(cv, fonts, "sans_bold", 11, 292, 814,
+    draw_tracked(cv, fonts, "sans_bold", 12.5, 292, 800,
                  "ALSO ON FRIDAY 20 NOVEMBER", INK, 1.0)
-    draw_map(cv, fonts, X0, 829, 260, 127, PINS)
+    draw_map(cv, fonts, X0, 814, 260, 132, PINS)
     for i, (place, text, src) in enumerate(ALSO):
         col = 0 if i < 11 else 1
         r = i % 11
         ax = 292 + col * 360
-        ay = 829 + r * 11
-        line = "%d. %s: %s (%s)" % (i + 1, place, text, src)
-        wdt = text_width(fonts, "sans", 9.5, line)
-        _note("also %d width %.0f" % (i + 1, wdt))
-        draw_text(cv, fonts, "sans", 9.5, ax, ay, line, INK)
+        ay = 814 + r * 13
+        lead = "%d. %s: " % (i + 1, place)
+        rest = "%s (%s)" % (text, src)
+        lw = text_width(fonts, "sans_bold", 11, lead)
+        rw = text_width(fonts, "sans", 11, rest)
+        _note("also %d width %.0f" % (i + 1, lw + rw))
+        draw_text(cv, fonts, "sans_bold", 11, ax, ay, lead, INK)
+        draw_text(cv, fonts, "sans", 11, int(ax + lw), ay, rest, INK)
 
     # date check + footer
     cv.rect(X0, 962, CW, 32, TINT2)
     cv.rect_outline(X0, 962, CW, 32, RULE, 1)
-    draw_text(cv, fonts, "sans", 10, X0 + 8, 967, DATE_CHECK[0], INK)
-    draw_text(cv, fonts, "sans", 10, X0 + 8, 980, DATE_CHECK[1], INK)
-    draw_centered(cv, fonts, "sans", 9, 512, 1000,
+    draw_text(cv, fonts, "sans", 11.5, X0 + 8, 966, DATE_CHECK[0], INK)
+    draw_text(cv, fonts, "sans", 11.5, X0 + 8, 980, DATE_CHECK[1], INK)
+    draw_centered(cv, fonts, "sans", 10.5, 512, 1000,
                   "Original drawings \u00b7 Sources named beside each story "
-                  "\u00b7 The World in One Day", GRAY)
+                  "\u00b7 The World in One Day", INK_SOFT)
     return cv
 
 
